@@ -1,0 +1,7 @@
+[toolchain]
+channel = "stable"
+# Cortex-M targets used across the example crates. rustup installs these
+# automatically the first time you run cargo in this workspace.
+#   *-eabihf : hard-float (STM32 F4/H7/WB55, CC1312R7)
+#   *-eabi   : soft-float (STM32WL55 CM4, no FPU)
+targets = ["thumbv7em-none-eabihf", "thumbv7em-none-eabi"]

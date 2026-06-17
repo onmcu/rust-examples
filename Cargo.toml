@@ -1,0 +1,29 @@
+[workspace]
+resolver = "2"
+members = [
+    "nucleo-h743zi",
+    "nucleo-f401re",
+    "nucleo-f439zi",
+    "nucleo-wb55rg",
+    "nucleo-wl55jc",
+    "lp-cc1312r7",
+]
+
+# Each member targets a different MCU and is built from within its own
+# directory (`cd <crate> && cargo run`) so the per-crate `.cargo/config.toml`
+# selects the right target, linker args and `onmcu run` board. Do NOT run
+# `cargo build --workspace`: the embassy-stm32 chip-selection features are
+# mutually exclusive and only resolve cleanly one crate at a time.
+
+[profile.dev]
+codegen-units = 1
+debug = 2
+incremental = false
+opt-level = 1
+
+[profile.release]
+codegen-units = 1
+debug = 2
+incremental = false
+lto = true
+opt-level = "s"
