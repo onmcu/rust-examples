@@ -56,3 +56,17 @@ cargo run                # compile + flash + run on OnMCU, returns 0 on success
 ## Exit signalling
 
 Each binary counts `0..=10` over RTT (`defmt`), then signals success to the host via an ARM semihosting `SYS_EXIT_EXTENDED` call so `onmcu run` terminates with exit code `0`. This is done by calling `semihosting::process::exit(0)`. The semihosting trap is serviced by the debugger that OnMCU attaches, so the run ends cleanly with code `0`. A non-zero code would signal failure.
+
+## Continuous integration
+
+`.github/workflows/onmcu.yml` builds and runs the examples on OnMCU. Only the
+crates whose folder changed in a push/PR are run (via path filtering), so there are no unecessary runs; a manual
+`workflow_dispatch` runs every crate.
+
+CI does not call `onmcu login`. It reads the API key from the environment and
+passes `--api-key-from-env`, so the only setup required is one repository
+secret:
+
+| Secret | Value |
+|--------|-------|
+| `ONMCU_API_KEY` | the OnMCU API key |
