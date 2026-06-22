@@ -1,17 +1,13 @@
 name: OnMCU
 
-# Build each example crate and run it on real hardware via OnMCU. Only the
-# crates whose folder changed are run; pushing to one board's example does not
-# spend a job (or an OnMCU run) on the others.
+# Build each example crate and run it on real hardware via OnMCU. On pull
+# requests only the crates whose folder changed are run, so a PR touching one
+# board does not spend a job (or an OnMCU run) on the others. Pushes to `main`
+# and manual `workflow_dispatch` runs always exercise every board.
 
 on:
   push:
-    paths:
-      - "nucleo-*/**"
-      - "lp-cc1312r7/**"
-      - "Cargo.lock"
-      - "rust-toolchain.toml"
-      - ".github/workflows/onmcu.yml"
+    branches: [main]
   pull_request:
     paths:
       - "nucleo-*/**"
@@ -44,10 +40,12 @@ jobs:
             lp-cc1312r7: ['lp-cc1312r7/**']
       - id: decide
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo 'crates=["nucleo-h743zi","nucleo-f401re","nucleo-f439zi","nucleo-wb55rg","nucleo-wl55jc","lp-cc1312r7"]' >> "$GITHUB_OUTPUT"
-          else
+          # Pushes to main and manual runs cover every board; PRs run only the
+          # crates whose folder changed.
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo 'crates=${{ steps.filter.outputs.changes }}' >> "$GITHUB_OUTPUT"
+          else
+            echo 'crates=["nucleo-h743zi","nucleo-f401re","nucleo-f439zi","nucleo-wb55rg","nucleo-wl55jc","lp-cc1312r7"]' >> "$GITHUB_OUTPUT"
           fi
 
   # One job per changed crate: build it, then flash + run it on OnMCU.
@@ -59,10 +57,6 @@ jobs:
       fail-fast: false
       matrix:
         crate: ${{ fromJSON(needs.changes.outputs.crates) }}
-    env:
-      # No `onmcu login` needed in CI: the key is read from the environment.
-      ONMCU_API_KEY: ${{ secrets.ONMCU_API_KEY }}
-      ONMCU_CLI_CONFIG_PATH: ${{ github.workspace }}/onmcu-ci.toml
     steps:
       - uses: actions/checkout@v4
 
@@ -75,26 +69,22 @@ jobs:
         with:
           key: ${{ matrix.crate }}
 
-      - name: Install OnMCU CLI
-        run: |
-          curl --proto '=https' --tlsv1.2 -LsSf \
-            https://github.com/onmcu/onmcu-rs/releases/latest/download/onmcu-installer.sh | sh
-
-      - name: Write OnMCU config
-        run: |
-          cat > "$ONMCU_CLI_CONFIG_PATH" <<'EOF'
-          server = "https://ctrl1.onmcu.com"
-          chunk_size = 5
-          retries = 3
-          timeout_seconds = 600
-          EOF
-
-      - name: Build and run ${{ matrix.crate }} on OnMCU
+      # Build the firmware and surface the board name and linked ELF so the
+      # OnMCU action can flash + run it.
+      - name: Build ${{ matrix.crate }}
+        id: build
         working-directory: ${{ matrix.crate }}
         run: |
           board=$(sed -n 's/^runner = "onmcu run --board \(.*\) --file"/\1/p' .cargo/config.toml)
           elf=$(cargo build --release --message-format=json \
             | jq -r 'select(.reason=="compiler-artifact" and .executable!=null) | .executable' \
             | tail -n1)
-          echo "Running $elf on board $board"
-          onmcu run --board "$board" --file "$elf" --api-key-from-env
+          echo "board=$board" >> "$GITHUB_OUTPUT"
+          echo "elf=$elf" >> "$GITHUB_OUTPUT"
+
+      - name: Run ${{ matrix.crate }} on OnMCU
+        uses: onmcu/onmcu-action@v1
+        with:
+          board: ${{ steps.build.outputs.board }}
+          file: ${{ steps.build.outputs.elf }}
+          api-key: ${{ secrets.ONMCU_API_KEY }}

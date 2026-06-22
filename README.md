@@ -1,5 +1,7 @@
 # rust-examples
 
+[![OnMCU](https://github.com/onmcu/rust-examples/actions/workflows/onmcu.yml/badge.svg)](https://github.com/onmcu/rust-examples/actions/workflows/onmcu.yml)
+
 Get started with [OnMCU](https://onmcu.com) in minutes. These are minimal per-board Rust examples that count upwards and stream the count over **RTT** on real hardware in the cloud.
 
 OnMCU can plug straight into the standard Rust toolchain as a Cargo *runner*, so flashing and running firmware on a physical MCU is just:
@@ -59,13 +61,14 @@ Each binary counts `0..=10` over RTT (`defmt`), then signals success to the host
 
 ## Continuous integration
 
-`.github/workflows/onmcu.yml` builds and runs the examples on OnMCU. Only the
-crates whose folder changed in a push/PR are run (via path filtering), so there are no unecessary runs; a manual
-`workflow_dispatch` runs every crate.
+`.github/workflows/onmcu.yml` builds and runs the examples on OnMCU via the
+[`onmcu/onmcu-action`](https://github.com/onmcu/onmcu-action). On a pull request
+only the crates whose folder changed are run (via path filtering), so there are
+no unnecessary runs; pushes to `main` and a manual `workflow_dispatch` run every
+crate.
 
-CI does not call `onmcu login`. It reads the API key from the environment and
-passes `--api-key-from-env`, so the only setup required is one repository
-secret:
+CI does not call `onmcu login`. The action receives the API key directly, so the
+only setup required is one repository secret:
 
 | Secret | Value |
 |--------|-------|
