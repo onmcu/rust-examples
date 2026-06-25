@@ -11,7 +11,6 @@ on:
   pull_request:
     paths:
       - "nucleo-*/**"
-      - "lp-cc1312r7/**"
       - "Cargo.lock"
       - "rust-toolchain.toml"
       - ".github/workflows/onmcu.yml"
@@ -37,7 +36,6 @@ jobs:
             nucleo-f439zi: ['nucleo-f439zi/**']
             nucleo-wb55rg: ['nucleo-wb55rg/**']
             nucleo-wl55jc: ['nucleo-wl55jc/**']
-            lp-cc1312r7: ['lp-cc1312r7/**']
       - id: decide
         run: |
           # Pushes to main and manual runs cover every board; PRs run only the
@@ -45,7 +43,7 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo 'crates=${{ steps.filter.outputs.changes }}' >> "$GITHUB_OUTPUT"
           else
-            echo 'crates=["nucleo-h743zi","nucleo-f401re","nucleo-f439zi","nucleo-wb55rg","nucleo-wl55jc","lp-cc1312r7"]' >> "$GITHUB_OUTPUT"
+            echo 'crates=["nucleo-h743zi","nucleo-f401re","nucleo-f439zi","nucleo-wb55rg","nucleo-wl55jc"]' >> "$GITHUB_OUTPUT"
           fi
 
   # One job per changed crate: build it, then flash + run it on OnMCU.
