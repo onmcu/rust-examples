@@ -1,0 +1,24 @@
+.github/workflows/onmcu.yml
+  s_9aebd25b8d9f00::t_0f571e45ddc575 46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "99b78b0028c22693839001be586c0d6806d05fbe",
+  "prompts": {},
+  "humans": {
+    "h_266fe4f058ae1a": {
+      "author": "Joël Schulz-Andres <joel@systemscape.de>"
+    }
+  },
+  "sessions": {
+    "s_9aebd25b8d9f00": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "036ab25a-9670-429b-8722-641fdf4d8494",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Joël Schulz-Andres <joel@systemscape.de>"
+    }
+  }
+}
