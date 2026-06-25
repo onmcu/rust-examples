@@ -14,6 +14,8 @@ on:
       - "Cargo.lock"
       - "rust-toolchain.toml"
       - ".github/workflows/onmcu.yml"
+  schedule:
+    - cron: "0 * * * *" # hourly run exercises every board
   workflow_dispatch: # manual trigger runs every crate
 
 permissions:
