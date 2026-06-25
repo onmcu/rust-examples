@@ -1,0 +1,14 @@
+lp-cc1312r7/.cargo/config.toml
+  h_266fe4f058ae1a 5-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "fc5d031bd06ab02dd18e96ac0a57710683e71865",
+  "prompts": {},
+  "humans": {
+    "h_266fe4f058ae1a": {
+      "author": "Joël Schulz-Andres <joel@systemscape.de>"
+    }
+  }
+}
