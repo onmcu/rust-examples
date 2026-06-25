@@ -6,7 +6,6 @@ members = [
     "nucleo-f439zi",
     "nucleo-wb55rg",
     "nucleo-wl55jc",
-    "lp-cc1312r7",
 ]
 
 # Each member targets a different MCU and is built from within its own
