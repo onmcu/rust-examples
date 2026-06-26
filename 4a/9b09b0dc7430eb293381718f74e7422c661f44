@@ -1,0 +1,31 @@
+.github/workflows/onmcu.yml
+  s_9aebd25b8d9f00::t_3400ea821bff42 78,80-95,99,101,109
+  s_9aebd25b8d9f00::t_4c2eb407f5d5f0 38
+  s_9aebd25b8d9f00::t_c7b53a4af103c1 49
+nucleo-f401re-serial/Cargo.toml
+  s_9aebd25b8d9f00::t_92c8ea1fbaf5b6 1-19
+nucleo-f401re-serial/.cargo/config.toml
+  s_9aebd25b8d9f00::t_2ab6b7e4f15674 1-13
+Cargo.toml
+  s_9aebd25b8d9f00::t_2dbf01c5028091 6
+nucleo-f401re-serial/src/bin/serial_hello.rs
+  s_9aebd25b8d9f00::t_cf391fbda9e949 1-27
+Cargo.lock
+  s_9aebd25b8d9f00::t_ad142e4ba662e6 727-741
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "4a9b09b0dc7430eb293381718f74e7422c661f44",
+  "prompts": {},
+  "sessions": {
+    "s_9aebd25b8d9f00": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "036ab25a-9670-429b-8722-641fdf4d8494",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Joël Schulz-Andres <joel@systemscape.de>"
+    }
+  }
+}
