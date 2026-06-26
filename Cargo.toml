@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "nucleo-h743zi",
     "nucleo-f401re",
+    "nucleo-f401re-serial",
     "nucleo-f439zi",
     "nucleo-wb55rg",
     "nucleo-wl55jc",

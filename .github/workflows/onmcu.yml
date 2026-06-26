@@ -35,6 +35,7 @@ jobs:
           filters: |
             nucleo-h743zi: ['nucleo-h743zi/**']
             nucleo-f401re: ['nucleo-f401re/**']
+            nucleo-f401re-serial: ['nucleo-f401re-serial/**']
             nucleo-f439zi: ['nucleo-f439zi/**']
             nucleo-wb55rg: ['nucleo-wb55rg/**']
             nucleo-wl55jc: ['nucleo-wl55jc/**']
@@ -45,7 +46,7 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo 'crates=${{ steps.filter.outputs.changes }}' >> "$GITHUB_OUTPUT"
           else
-            echo 'crates=["nucleo-h743zi","nucleo-f401re","nucleo-f439zi","nucleo-wb55rg","nucleo-wl55jc"]' >> "$GITHUB_OUTPUT"
+            echo 'crates=["nucleo-h743zi","nucleo-f401re","nucleo-f401re-serial","nucleo-f439zi","nucleo-wb55rg","nucleo-wl55jc"]' >> "$GITHUB_OUTPUT"
           fi
 
   # One job per changed crate: build it, then flash + run it on OnMCU.
@@ -74,12 +75,30 @@ jobs:
       - name: Build ${{ matrix.crate }}
         id: build
         working-directory: ${{ matrix.crate }}
+        shell: bash
         run: |
-          board=$(sed -n 's/^runner = "onmcu run --board \(.*\) --file"/\1/p' .cargo/config.toml)
+          set -euo pipefail
+          shopt -s inherit_errexit
+
+          # The per-crate runner encodes the full OnMCU invocation:
+          #   onmcu run --board <BOARD> [extra opts] --file
+          # Split out the board and any extra options (e.g. --logging serial) so
+          # the OnMCU action runs with the same flags as a local `cargo run`.
+          runner=$(sed -n 's/^runner = "\(.*\)"$/\1/p' .cargo/config.toml)
+          rest=${runner#onmcu run --board }
+          board=${rest%% *}
+          args=${rest#"$board"}
+          args=${args% --file}
+          args=${args# }
+
+          # inherit_errexit makes a failed `cargo build` abort the step instead
+          # of silently yielding an empty ELF to the run below.
           elf=$(cargo build --release --message-format=json \
             | jq -r 'select(.reason=="compiler-artifact" and .executable!=null) | .executable' \
             | tail -n1)
+
           echo "board=$board" >> "$GITHUB_OUTPUT"
+          echo "args=$args" >> "$GITHUB_OUTPUT"
           echo "elf=$elf" >> "$GITHUB_OUTPUT"
 
       - name: Run ${{ matrix.crate }} on OnMCU
@@ -87,4 +106,5 @@ jobs:
         with:
           board: ${{ steps.build.outputs.board }}
           file: ${{ steps.build.outputs.elf }}
+          args: ${{ steps.build.outputs.args }}
           api-key: ${{ secrets.ONMCU_API_KEY }}
