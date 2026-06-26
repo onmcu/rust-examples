@@ -94,17 +94,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cc13x2x7_cc26x2x7_pac"
-version = "0.10.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b73a5f6f2d123e9aff57f2df18be599c8fe8bb5f2ebd053b408638f263de1a9c"
-dependencies = [
- "cortex-m",
- "cortex-m-rt",
- "vcell",
-]
-
-[[package]]
 name = "cfg-if"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -682,19 +671,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "lp-cc1312r7"
-version = "0.1.0"
-dependencies = [
- "cc13x2x7_cc26x2x7_pac",
- "cortex-m",
- "cortex-m-rt",
- "defmt 0.3.100",
- "defmt-rtt",
- "panic-probe",
- "semihosting",
-]
-
-[[package]]
 name = "matchers"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -735,6 +711,21 @@ dependencies = [
 
 [[package]]
 name = "nucleo-f401re"
+version = "0.1.0"
+dependencies = [
+ "cortex-m",
+ "cortex-m-rt",
+ "defmt 0.3.100",
+ "defmt-rtt",
+ "embassy-executor",
+ "embassy-stm32",
+ "embassy-time",
+ "panic-probe",
+ "semihosting",
+]
+
+[[package]]
+name = "nucleo-f401re-serial"
 version = "0.1.0"
 dependencies = [
  "cortex-m",
